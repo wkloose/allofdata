@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"go-jwt/initializers"
-	"go-jwt/models"
+	"trashure/internal/initializers"
+	"trashure/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -103,8 +103,8 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-func Validate(c *gin.Context){
-	user, _ :=c.Get("user")
+func Validate(c *gin.Context) {
+	user, _ := c.Get("user")
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": user,

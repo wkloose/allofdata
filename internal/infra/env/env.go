@@ -1,6 +1,7 @@
 package env
 import(
   "github.com/joho/godotenv"
+  "github.com/caarlos0/env/v10"
 )
 type Env struct{
 	App_Port int `env:"APP_PORT"`

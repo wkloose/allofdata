@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"fmt"
-	"go-jwt/initializers"
-	"go-jwt/models"
+	"trashure/internal/initializers"
+	"trashure/internal/models"   
 
 	//"go/token"
 	"net/http"

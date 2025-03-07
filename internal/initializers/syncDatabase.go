@@ -1,7 +1,7 @@
 package initializers
 
 import (
-	"go-jwt/models"
+	"trashure/internal/models"
 )
 
 func SyncDatabase() {
