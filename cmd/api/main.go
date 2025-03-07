@@ -2,10 +2,10 @@ package main
 
 import (
 	//	"fmt"
-	"Trashure/internal/controllers"
-	"Trashure/internal/initializers"
-	"Trashure/internal/middleware"
-	"Trashure/internal/app/bootstrap"
+	"trashure/internal/controllers"
+	"trashure/internal/initializers"
+	"trashure/internal/middleware"
+	//"trashure/internal/app/bootstrap"
 	"github.com/gin-gonic/gin"
 )
 
