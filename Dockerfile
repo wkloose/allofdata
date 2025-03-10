@@ -1,6 +1,6 @@
 FROM golang:1.24.0 AS builder
 
-WORKDIR /bulid
+WORKDIR /build
 
 COPY . .
 
