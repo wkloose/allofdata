@@ -26,7 +26,6 @@ jobs:
           context: ./
           tags: ${{ secrets.IMAGE_NAME }}
           push: ${{ github.ref_name == 'master' }}
-          cache-from: type=registry,ref=${{ secrets.IMAGE_NAME }}
 
       - name: SSH Deploy
         uses: appleboy/ssh-action@v1.2.1
