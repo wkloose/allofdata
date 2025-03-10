@@ -1,8 +1,12 @@
 package postgresql
 
-//import "trashure/internal/domain/user"
+import "gorm.io/gorm"
 
-
+type User struct {
+	gorm.Model
+	Email string	`gorm:"unique"` 
+	Password string
+}
 func SyncDatabase() {
-	//DB.AutoMigrate(&user.User{})
+	DB.AutoMigrate(&User{})
 }
