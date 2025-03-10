@@ -4,8 +4,6 @@ WORKDIR /build
 
 COPY . .
 
-COPY .env .env
-
 RUN CGO_ENABLED=0 go build -o trashure cmd/api/main.go
 
 FROM alpine:latest AS prod
