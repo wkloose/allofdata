@@ -4,15 +4,12 @@ import (
 		"fmt"
 	"trashure/internal/domain/user"
 	"trashure/internal/framework"
-	"trashure/internal/infra/config"
 	"trashure/internal/infra/postgresql"
 	"os"
-	//"trashure/internal/app/bootstrap"
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	config.LoadEnvVariables()
 	postgresql.ConnectToDb()
 	postgresql.SyncDatabase()
 }
