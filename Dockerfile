@@ -1,8 +1,10 @@
 FROM golang:1.24.0 AS builder
 
-WORKDIR /build
+WORKDIR /bulid
 
 COPY . .
+
+COPY .env .env
 
 RUN CGO_ENABLED=0 go build -o trashure cmd/api/main.go
 
@@ -12,5 +14,4 @@ WORKDIR /app
 
 COPY --from=builder /build/trashure .
 
-EXPOSE 8080
 ENTRYPOINT ["./trashure"]
