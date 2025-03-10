@@ -1,9 +1,9 @@
-package middleware
+package framework
 
 import (
 	"fmt"
-	"trashure/internal/initializers"
-	"trashure/internal/models"   
+	"trashure/internal/domain/user"
+	"trashure/internal/infra/postgresql"
 
 	//"go/token"
 	"net/http"
@@ -44,14 +44,14 @@ func RequireAuth(c *gin.Context) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		// Find the user with token sub
-		var user models.User
-		initializers.DB.First(&user, claims["sub"])
+		var u user.User 
+		postgresql.DB.First(&u, claims["sub"])
 
-		if user.ID == 0 {
+		if u.ID == 0 {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		// Attach to req
-		c.Set("user", user)
+		c.Set("user", u)
 
 		// Continue
 		c.Next()

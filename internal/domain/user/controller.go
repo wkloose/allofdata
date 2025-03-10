@@ -1,12 +1,11 @@
-package controllers
+package user
 
 import (
 	"net/http"
 	"os"
 	"time"
 
-	"trashure/internal/initializers"
-	"trashure/internal/models"
+	"trashure/internal/infra/postgresql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -37,8 +36,8 @@ func Signup(c *gin.Context) {
 		return
 	}
 	//Create a new user
-	user := models.User{Email: body.Email, Password: string(hash)}
-	result := initializers.DB.Create(&user) // pass pointer of data to Create
+	newUser := User{Email: body.Email, Password: string(hash)}
+	result := postgresql.DB.Create(&newUser) // pass pointer of data to Create
 
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -64,8 +63,8 @@ func Login(c *gin.Context) {
 		return
 	}
 	//Look up the user by email
-	var user models.User
-	initializers.DB.First(&user, "email = ?", body.Email)
+	var user User
+	postgresql.DB.First(&user, "email = ?", body.Email)
 
 	if user.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
