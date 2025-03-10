@@ -1,12 +1,12 @@
 package main
 
 import (
-	//	"fmt"
+		"fmt"
 	"trashure/internal/domain/user"
 	"trashure/internal/framework"
 	"trashure/internal/infra/config"
 	"trashure/internal/infra/postgresql"
-
+	"os"
 	//"trashure/internal/app/bootstrap"
 	"github.com/gin-gonic/gin"
 )
@@ -21,5 +21,10 @@ func main() {
 	r.POST("/signup", user.Signup)
 	r.POST("/login", user.Login)
 	r.GET("/validate", framework.RequireAuth, user.Validate)
-	r.Run() // listen and serve on 0.0.0.0:8080
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3008"
+	}
+	
+	r.Run(fmt.Sprintf(":%s", port))
 }
