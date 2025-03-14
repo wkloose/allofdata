@@ -6,6 +6,10 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+func init() {
+    SyncDatabase()
+    SeedUsers()
+}
 
 func ConnectToDb() {
 	var err error
