@@ -74,4 +74,13 @@ func RegisterRoutes(r *gin.Engine) {
     {
         admin.GET("/statistics", controllers.GetStatistics) // Admin melihat laporan statistik aplikasi
     }
+
+    wasteconnect := r.Group("/wasteconnect")
+    wasteconnect.Use(middleware.RequireAuth)
+    {
+    // Bank Sampah
+    wasteconnect.PUT("/order/:id/confirm", middleware.BankSampahOnly, controllers.ConfirmOrder)
+    wasteconnect.POST("/order/:id/rate", middleware.BankSampahOnly, controllers.RateOrder)
+    wasteconnect.GET("/user/history", controllers.GetUserHistory)
+    }
 }
