@@ -74,6 +74,6 @@ func RegisterRoutes(r *gin.Engine) {
     {
     wasteconnect.PUT("/order/:id/confirm", middleware.BankSampahOnly, controllers.ConfirmOrder)
     wasteconnect.POST("/order/:id/rate", middleware.BankSampahOnly, controllers.RateOrder)
-    wasteconnect.GET("/user/history", controllers.GetUserHistory)
+    wasteconnect.GET("/:id/history", controllers.GetUserHistory)
     }
 }

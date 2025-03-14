@@ -241,10 +241,14 @@ func GetUserHistory(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": histories})
 }
 
-func AddUserHistory(userID uint, address, day string) error {
+func AddUserHistory(userID uint, address string,province string,city string,district string,subdistrict string, day string) error {
     history := models.UserHistory{
         UserID:  userID,
         Address: address,
+        Province: province,
+        City    :city,    
+        District :district, 
+        SubDistrict :subdistrict,
         Time:    time.Now(),
         Day:     day,
     }
