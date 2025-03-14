@@ -12,7 +12,6 @@ import (
 )
 
 func Signup(c *gin.Context) {
-	//Get the email/pass off req body
 	var body struct {
 		Name  string `gorm:"not null"` 
  	    Email  string `gorm:"unique;not null"`
@@ -22,8 +21,8 @@ func Signup(c *gin.Context) {
         District    string
         SubDistrict string
         Address     string
-        Points      int `gorm:"default:0"` // Jumlah poin
-	    DateOfBirth  string `gorm:"not null"`      // Tanggal lahir (format YYYY-MM-DD)        
+        Points      int `gorm:"default:0"`
+	    DateOfBirth  string `gorm:"not null"`             
         BankAccount  string `gorm:"unique;not null"`
 	    Role        string `gorm:"not null;default:user"`
 	}
@@ -35,7 +34,6 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	//Hash the password
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
 
 	if err != nil {
@@ -44,9 +42,9 @@ func Signup(c *gin.Context) {
 		})
 		return
 	}
-	//Create a new user
+
 	user := models.User{Email: body.Email, Password: string(hash)}
-	result := postgresql.DB.Create(&user) // pass pointer of data to Create
+	result := postgresql.DB.Create(&user) 
 
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -54,12 +52,10 @@ func Signup(c *gin.Context) {
 		})
 		return
 	}
-	//respond
 	c.JSON(http.StatusOK, gin.H{})
 }
 
 func Login(c *gin.Context) {
-	//Get the email and password off req body
 	var body struct {
 		Email    string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
@@ -71,7 +67,6 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	//Look up the user by email
 	var user models.User
 	postgresql.DB.First(&user, "email = ?", body.Email)
 
@@ -81,7 +76,6 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	//Compare sent in pass with saved user pass hash
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -89,7 +83,6 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	//Generate a Jwt token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,
 		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
@@ -166,13 +159,11 @@ func UpdateUserByID(c *gin.Context) {
     id := c.Param("id")
     var user models.User
 
-    // Temukan user berdasarkan ID
     if err := postgresql.DB.First(&user, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
         return
     }
 
-    // Ambil data dari body request
     var body struct {
         Name        string `json:"name"`
         Province    string `json:"province"`
@@ -187,7 +178,6 @@ func UpdateUserByID(c *gin.Context) {
         return
     }
 
-    // Update data user
     user.Name = body.Name
     user.Province = body.Province
     user.City = body.City
@@ -205,8 +195,6 @@ func UpdateUserByID(c *gin.Context) {
 func GetUserByID(c *gin.Context) {
     id := c.Param("id")
     var user models.User
-
-    // Cari pengguna berdasarkan ID
     if err := postgresql.DB.First(&user, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
         return
@@ -217,7 +205,6 @@ func GetUserByID(c *gin.Context) {
 func GetAllUsers(c *gin.Context) {
     var users []models.User
 
-    // Ambil semua data pengguna dari database
     if err := postgresql.DB.Find(&users).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve users"})
         return
@@ -229,13 +216,11 @@ func DeleteUserByID(c *gin.Context) {
     id := c.Param("id")
     var user models.User
 
-    // Cari pengguna berdasarkan ID
     if err := postgresql.DB.First(&user, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
         return
     }
 
-    // Hapus pengguna dari database
     if err := postgresql.DB.Delete(&user).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
         return
@@ -243,12 +228,11 @@ func DeleteUserByID(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully", "id": id})
 }
-// GetUserHistory - Mendapatkan riwayat pengguna
+
 func GetUserHistory(c *gin.Context) {
     id := c.Param("id")
     var histories []models.UserHistory
 
-    // Cari riwayat berdasarkan UserID
     if err := postgresql.DB.Where("user_id = ?", id).Find(&histories).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user history"})
         return
@@ -257,7 +241,6 @@ func GetUserHistory(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": histories})
 }
 
-// AddUserHistory - Menambahkan riwayat pengguna
 func AddUserHistory(userID uint, address, day string) error {
     history := models.UserHistory{
         UserID:  userID,
@@ -272,7 +255,7 @@ func AddUserHistory(userID uint, address, day string) error {
 
     return nil
 }
-// GetUserRanking - Mendapatkan peringkat pengguna berdasarkan poin
+
 func GetUserRanking(c *gin.Context) {
     var users []models.User
 

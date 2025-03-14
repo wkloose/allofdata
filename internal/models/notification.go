@@ -11,6 +11,6 @@ type Notification struct {
     User    User      `gorm:"foreignKey:UserID"`
     Title   string    `gorm:"not null"` 
     Message string    `gorm:"not null"` 
-    Read    bool      `gorm:"default:false"` // Status apakah notifikasi sudah dibaca
+    Read    bool      `gorm:"default:false"` 
     Time    time.Time `gorm:"not null"` 
 }

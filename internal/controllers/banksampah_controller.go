@@ -8,7 +8,7 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-// CreateBankSampah - Membuat Bank Sampah baru
+
 func CreateBankSampah(c *gin.Context) {
     var body struct {
         Title      string `json:"title" binding:"required"`
@@ -37,7 +37,6 @@ func CreateBankSampah(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"message": "Bank Sampah created successfully", "data": bankSampah})
 }
 
-// GetAllBankSampah - Mendapatkan semua Bank Sampah
 func GetAllBankSampah(c *gin.Context) {
     var bankSampahList []models.BankSampah
     if err := postgresql.DB.Find(&bankSampahList).Error; err != nil {
@@ -48,7 +47,6 @@ func GetAllBankSampah(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": bankSampahList})
 }
 
-// GetBankSampahByID - Mendapatkan detail Bank Sampah berdasarkan ID
 func GetBankSampahByID(c *gin.Context) {
     id := c.Param("id")
     var bankSampah models.BankSampah
@@ -61,7 +59,7 @@ func GetBankSampahByID(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": bankSampah})
 }
 
-// UpdateBankSampahByID - Memperbarui Bank Sampah berdasarkan ID
+
 func UpdateBankSampahByID(c *gin.Context) {
     id := c.Param("id")
     var bankSampah models.BankSampah
@@ -104,7 +102,6 @@ func UpdateBankSampahByID(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Bank Sampah updated successfully", "data": bankSampah})
 }
 
-// DeleteBankSampahByID - Menghapus Bank Sampah berdasarkan ID
 func DeleteBankSampahByID(c *gin.Context) {
     id := c.Param("id")
     var bankSampah models.BankSampah
@@ -123,7 +120,6 @@ func DeleteBankSampahByID(c *gin.Context) {
 }
 
 
-// GetBankSampahCollections - Mendapatkan semua jadwal penjemputan untuk Bank Sampah
 func GetBankSampahCollections(c *gin.Context) {
     user, _ := c.Get("user")
     currentUser := user.(models.User)
@@ -137,11 +133,10 @@ func GetBankSampahCollections(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": collections})
 }
 
-// UpdateCollectionStatusByBankSampah - Mengubah status penjemputan (done, pending, canceled)
 func UpdateCollectionStatusByBankSampah(c *gin.Context) {
     id := c.Param("id")
     var body struct {
-        Status string `json:"status" binding:"required"` // Status baru: done, pending, canceled
+        Status string `json:"status" binding:"required"`
     }
 
     if err := c.ShouldBindJSON(&body); err != nil {
@@ -164,7 +159,6 @@ func UpdateCollectionStatusByBankSampah(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Collection status updated successfully", "data": collection})
 }
 
-// GetTrashureRequestsByBankSampah - Melihat semua Trashure Requests terkait Bank Sampah
 func GetTrashureRequestsByBankSampah(c *gin.Context) {
     var requests []models.TrashureRequest
 

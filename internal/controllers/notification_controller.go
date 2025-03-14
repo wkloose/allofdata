@@ -9,7 +9,6 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-// GetNotifications - Ambil notifikasi pengguna
 func GetNotifications(c *gin.Context) {
     user, _ := c.Get("user")
     currentUser := user.(models.User)
@@ -23,7 +22,7 @@ func GetNotifications(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": notifications})
 }
 
-// CreateNotification - Buat notifikasi baru
+
 func CreateNotification(c *gin.Context) {
     var body struct {
         UserID  uint   `json:"user_id" binding:"required"`
@@ -52,7 +51,6 @@ func CreateNotification(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"message": "Notification created successfully", "data": notification})
 }
 
-// MarkAsRead - Tandai notifikasi sebagai dibaca
 func MarkAsRead(c *gin.Context) {
     id := c.Param("id")
     var notification models.Notification

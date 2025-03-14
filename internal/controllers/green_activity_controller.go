@@ -9,7 +9,7 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-// GetAllGreenActivities - Mendapatkan semua aktivitas hijau
+
 func GetAllGreenActivities(c *gin.Context) {
     var activities []models.GreenActivity
     if err := postgresql.DB.Find(&activities).Error; err != nil {
@@ -19,7 +19,7 @@ func GetAllGreenActivities(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": activities})
 }
 
-// CreateGreenActivity - Menambahkan aktivitas hijau baru
+
 func CreateGreenActivity(c *gin.Context) {
     var body struct {
         Title       string    `json:"title" binding:"required"`
@@ -48,7 +48,7 @@ func CreateGreenActivity(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"message": "Green activity created successfully", "data": activity})
 }
 
-// UpdateGreenActivity - Memperbarui aktivitas hijau
+
 func UpdateGreenActivity(c *gin.Context) {
     id := c.Param("id")
     var activity models.GreenActivity
@@ -71,7 +71,6 @@ func UpdateGreenActivity(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Green activity updated successfully", "data": activity})
 }
 
-// DeleteGreenActivity - Menghapus aktivitas hijau
 func DeleteGreenActivity(c *gin.Context) {
     id := c.Param("id")
     if err := postgresql.DB.Delete(&models.GreenActivity{}, id).Error; err != nil {
@@ -81,7 +80,7 @@ func DeleteGreenActivity(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Green activity deleted successfully", "id": id})
 }
 
-// RecommendGreenActivities - Rekomendasi aktivitas hijau berdasarkan filter
+
 func RecommendGreenActivities(c *gin.Context) {
     var activities []models.GreenActivity
     location := c.Query("location")

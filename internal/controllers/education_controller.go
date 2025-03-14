@@ -7,7 +7,6 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-// CreateVideo - Admin menambahkan video edukasi
 func CreateVideo(c *gin.Context) {
     var body struct {
         Title  string `json:"title" binding:"required"`
@@ -34,7 +33,7 @@ func CreateVideo(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"message": "Video created successfully", "data": video})
 }
 
-// GetVideos - User melihat semua video edukasi
+
 func GetVideos(c *gin.Context) {
     var videos []models.Education
     if err := postgresql.DB.Find(&videos).Error; err != nil {
@@ -45,7 +44,6 @@ func GetVideos(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": videos})
 }
 
-// CompleteVideo - User menyelesaikan video dan mendapatkan poin
 func CompleteVideo(c *gin.Context) {
     id := c.Param("id")
     user, _ := c.Get("user")
@@ -57,7 +55,6 @@ func CompleteVideo(c *gin.Context) {
         return
     }
 
-    // Tambahkan poin ke pengguna
     currentUser.Points += video.Points
     if err := postgresql.DB.Save(&currentUser).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user points"})
@@ -66,18 +63,16 @@ func CompleteVideo(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"message": "Video completed successfully", "points_added": video.Points})
 }
-// UpdateVideo - Admin memperbarui informasi video edukasi
+
 func UpdateVideo(c *gin.Context) {
     id := c.Param("id")
     var video models.Education
 
-    // Temukan video berdasarkan ID
     if err := postgresql.DB.First(&video, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Video not found"})
         return
     }
 
-    // Ambil data baru dari request body
     var body struct {
         Title  string `json:"title"`
         Link   string `json:"link"`
@@ -89,7 +84,6 @@ func UpdateVideo(c *gin.Context) {
         return
     }
 
-    // Update data video
     if body.Title != "" {
         video.Title = body.Title
     }
@@ -107,18 +101,16 @@ func UpdateVideo(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"message": "Video updated successfully", "data": video})
 }
-// DeleteVideo - Admin menghapus video edukasi
+
 func DeleteVideo(c *gin.Context) {
     id := c.Param("id")
     var video models.Education
 
-    // Temukan video berdasarkan ID
     if err := postgresql.DB.First(&video, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Video not found"})
         return
     }
 
-    // Hapus video
     if err := postgresql.DB.Delete(&video).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete video"})
         return

@@ -8,19 +8,16 @@ import (
     "gorm.io/gorm"
 )
 
-// SeedUsers - Fungsi untuk menambahkan data pengguna awal
+
 func SeedUsers(db *gorm.DB) {
-    // Periksa apakah sudah ada data pengguna di tabel User
     var count int64
     db.Model(&models.User{}).Count(&count)
     if count > 0 {
         return
     }
 
-    // Generate password terenkripsi
     password, _ := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
 
-    // Data pengguna awal yang akan disimpan
     users := []models.User{
         {
             Name:        "Admin",
@@ -66,12 +63,11 @@ func SeedUsers(db *gorm.DB) {
         },
     }
 
-    // Loop untuk memasukkan data pengguna ke dalam database
+    // loop untuk memasukkan data pengguna ke dalam database
     for _, user := range users {
         var existing models.User
         result := db.First(&existing, "email = ?", user.Email)
 
-        // Tambahkan pengguna hanya jika belum ada di database
         if result.RowsAffected == 0 {
             if err := db.Create(&user).Error; err != nil {
                 log.Printf("Gagal menambahkan pengguna %s: %v\n", user.Email, err)

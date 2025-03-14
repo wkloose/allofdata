@@ -6,9 +6,8 @@ import(
     "fmt"
 	"github.com/gin-gonic/gin"
 )
-// CreateTrashureRequest - User membuat permintaan pengumpulan sampah
+
 func CreateTrashureRequest(c *gin.Context) {
-    // Ambil tipe sampah dan berat dari form
     type TrashureRequestInput struct {
         Type   string  `form:"type" binding:"required"`
         Weight float64 `form:"weight" binding:"required"`
@@ -20,21 +19,18 @@ func CreateTrashureRequest(c *gin.Context) {
         return
     }
 
-    // Ambil file gambar dari request
     fileHeader, err := c.FormFile("image")
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Image file is required"})
         return
     }
 
-    // Unggah gambar ke Supabase dan dapatkan URL-nya
     imageURL, err := UploadImageToSupabase(fileHeader)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to upload image: %s", err.Error())})
         return
     }
 
-    // Simpan URL gambar dan data lainnya ke database
     trashureRequest := models.TrashureRequest{
         Type:     input.Type,
         Weight:   input.Weight,
@@ -57,17 +53,14 @@ func GetTrashureRequest(c *gin.Context) {
     id := c.Param("id")
     var trashureRequest models.TrashureRequest
 
-    // Cari Trashure Request berdasarkan ID
     if err := postgresql.DB.First(&trashureRequest, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Trashure request not found"})
         return
     }
 
-    // Kembalikan data Trashure Request
     c.JSON(http.StatusOK, gin.H{"data": trashureRequest})
 }
 
-// ConfirmTrashureRequest - Admin mengkonfirmasi permintaan dan menetapkan harga
 func ConfirmTrashureRequest(c *gin.Context) {
     id := c.Param("id")
     var body struct {
@@ -81,7 +74,7 @@ func ConfirmTrashureRequest(c *gin.Context) {
 
     var request models.TrashureRequest
 
-    // Temukan permintaan
+    
     if err := postgresql.DB.First(&request, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Trashure request not found"})
         return
@@ -101,13 +94,11 @@ func DeleteTrashureRequest(c *gin.Context) {
     id := c.Param("id")
     var request models.TrashureRequest
 
-    // Cari permintaan berdasarkan ID
     if err := postgresql.DB.First(&request, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Trashure request not found"})
         return
     }
 
-    // Hapus permintaan dari database
     if err := postgresql.DB.Delete(&request).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete trashure request"})
         return

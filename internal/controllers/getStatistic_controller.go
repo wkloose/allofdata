@@ -7,9 +7,9 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-// GetStatistics - Mendapatkan laporan statistik
+
 func GetStatistics(c *gin.Context) {
-    // Statistik total sampah terkumpul per kategori
+    
     var wasteStats []struct {
         Category string
         TotalKg  float64
@@ -22,7 +22,6 @@ func GetStatistics(c *gin.Context) {
         return
     }
 
-    // Statistik jumlah transaksi berdasarkan status
     var transactionStats []struct {
         Status    string
         Total     int
@@ -35,7 +34,6 @@ func GetStatistics(c *gin.Context) {
         return
     }
 
-    // Statistik distribusi poin pengguna
     var pointStats []struct {
         Name   string
         Points int
@@ -49,7 +47,6 @@ func GetStatistics(c *gin.Context) {
         return
     }
 
-    // Gabungkan semua statistik dalam satu respons
     c.JSON(http.StatusOK, gin.H{
         "waste_statistics":    wasteStats,
         "transaction_statistics": transactionStats,

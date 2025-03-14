@@ -11,14 +11,12 @@ import (
 )
 
 func RequireAuth(c *gin.Context) {
-    // Ambil cookie token
     tokenString, err := c.Cookie("Authorization")
     if err != nil {
         c.AbortWithStatus(http.StatusUnauthorized)
         return
     }
 
-    // Parse token JWT
     token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
         return []byte(os.Getenv("SECRET")), nil
     })
@@ -28,7 +26,6 @@ func RequireAuth(c *gin.Context) {
         return
     }
 
-    // Ambil klaim dari token
     claims, ok := token.Claims.(jwt.MapClaims)
     if !ok {
         c.AbortWithStatus(http.StatusUnauthorized)
@@ -44,7 +41,6 @@ func RequireAuth(c *gin.Context) {
         return
     }
 
-    // Tambahkan pengguna ke konteks
     c.Set("user", user)
     c.Next()
 }

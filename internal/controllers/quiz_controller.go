@@ -9,7 +9,6 @@ import (
 )
 
 func CreateQuiz(c *gin.Context) {
-    // Periksa apakah pengguna adalah admin
     user, _ := c.Get("user")
     currentUser := user.(models.User)
     if currentUser.Role != "admin" {
@@ -17,7 +16,6 @@ func CreateQuiz(c *gin.Context) {
         return
     }
 
-    // Ambil input kuis
     var body struct {
         Title       string `json:"title" binding:"required"`
         Description string `json:"description" binding:"required"`
@@ -27,29 +25,25 @@ func CreateQuiz(c *gin.Context) {
             OptionB      string `json:"option_b" binding:"required"`
             OptionC      string `json:"option_c" binding:"required"`
             OptionD      string `json:"option_d" binding:"required"`
-            CorrectAnswer string `json:"correct_answer" binding:"required"` // A, B, C, atau D
-        } `json:"questions" binding:"required,len=10"` // Harus ada tepat 10 pertanyaan
+            CorrectAnswer string `json:"correct_answer" binding:"required"` 
+        } `json:"questions" binding:"required,len=10"`
     }
 
-    // Validasi input
     if err := c.ShouldBindJSON(&body); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input format or missing fields"})
         return
     }
 
-    // Buat kuis
     quiz := models.Quiz{
         Title:       body.Title,
         Description: body.Description,
     }
 
-    // Simpan kuis ke database
     if err := postgresql.DB.Create(&quiz).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create quiz"})
         return
     }
 
-    // Tambahkan pertanyaan ke kuis
     for _, q := range body.Questions {
         question := models.Question{
             QuizID:       quiz.ID,
@@ -72,7 +66,6 @@ func CreateQuiz(c *gin.Context) {
 func GetQuizzes(c *gin.Context) {
     var quizzes []models.Quiz
 
-    // Ambil semua kuis dari database
     if err := postgresql.DB.Preload("Questions").Find(&quizzes).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve quizzes"})
         return
@@ -87,17 +80,15 @@ func CompleteQuiz(c *gin.Context) {
 
     var quiz models.Quiz
 
-    // Cari kuis berdasarkan ID
     if err := postgresql.DB.Preload("Questions").First(&quiz, id).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Quiz not found"})
         return
     }
 
-    // Ambil jawaban pengguna
     var body struct {
         Answers []struct {
             QuestionID uint   `json:"question_id" binding:"required"`
-            Answer     string `json:"answer" binding:"required"` // Jawaban pengguna (A, B, C, atau D)
+            Answer     string `json:"answer" binding:"required"`
         } `json:"answers" binding:"required,len=10"`
     }
 
@@ -106,7 +97,7 @@ func CompleteQuiz(c *gin.Context) {
         return
     }
 
-    // Periksa jawaban
+    
     correctCount := 0
     for _, userAnswer := range body.Answers {
         for _, question := range quiz.Questions {
@@ -117,7 +108,6 @@ func CompleteQuiz(c *gin.Context) {
         }
     }
 
-    // Hitung poin berdasarkan jumlah jawaban benar
     points := correctCount * 10
     currentUser.Points += points
 

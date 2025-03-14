@@ -8,7 +8,6 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine) {
-    // Public Routes (tanpa autentikasi)
     auth := r.Group("/")
     {
         auth.POST("/signup", controllers.Signup)               // Registrasi pengguna
@@ -18,67 +17,61 @@ func RegisterRoutes(r *gin.Engine) {
 
     // User Routes
     users := r.Group("/users")
-    users.Use(middleware.RequireAuth) // Hanya pengguna yang terautentikasi
+    users.Use(middleware.RequireAuth) // Perlu TOKEN
     {
-        users.POST("/", middleware.AdminOnly, controllers.CreateUser)           // Admin membuat pengguna baru
-        users.GET("/", middleware.AdminOnly, controllers.GetAllUsers)           // Admin melihat semua pengguna
-        users.GET("/:id", controllers.GetUserByID)                              // Mendapatkan detail pengguna
-        users.PUT("/:id", controllers.UpdateUserByID)                           // Memperbarui data pengguna
-        users.DELETE("/:id", middleware.AdminOnly, controllers.DeleteUserByID)  // Admin menghapus pengguna
-        users.GET("/ranking", controllers.GetUserRanking)                       // Mendapatkan peringkat pengguna berdasarkan poin
+        users.POST("/", middleware.AdminOnly, controllers.CreateUser)           // AdminOnly Bisa membuat pengguna baru
+        users.GET("/", middleware.AdminOnly, controllers.GetAllUsers)           // AdminOnly Melihat semua pengguna
+        users.GET("/:id", controllers.GetUserByID)                              // Mendapatkan Detail pengguna berdasarkan id
+        users.PUT("/:id", controllers.UpdateUserByID)                           // Memperbarui Data pengguna berdasarkan id
+        users.DELETE("/:id", middleware.AdminOnly, controllers.DeleteUserByID)  // Admin Menghapus pengguna
+        users.GET("/ranking", controllers.GetUserRanking)                       // Menggunakan Descending untuk Menyusun data
         users.GET("/:id/history", controllers.GetUserHistory)                   // Mendapatkan riwayat aktivitas pengguna
-        users.POST("/:id/points", controllers.AddPoints)                        // Menambahkan poin pengguna
+        users.POST("/:id/points", controllers.AddPoints)                        // Menambahkan Otomatis Poin pengguna
     }
 
-    // Trashure Request Routes
     trashure := r.Group("/trashure-requests")
-    trashure.Use(middleware.RequireAuth) // Mengamankan rute dengan autentikasi
+    trashure.Use(middleware.RequireAuth) 
     {
-        trashure.POST("/", controllers.CreateTrashureRequest)                   // User membuat permintaan
-        trashure.GET("/", middleware.AdminOnly, controllers.GetTrashureRequest) // Admin melihat semua permintaan
-        trashure.PUT("/:id/confirm", middleware.AdminOnly, controllers.ConfirmTrashureRequest) // Admin mengkonfirmasi permintaan
-        trashure.GET("/:id", controllers.GetTrashureRequest)                    // User mendapatkan detail permintaan
-        trashure.DELETE("/:id", controllers.DeleteTrashureRequest)              // Admin atau User menghapus permintaan
-        trashure.GET("/signed-url", controllers.GetSignedURL)                   // Mendapatkan Signed URL untuk file
+        trashure.POST("/", controllers.CreateTrashureRequest)                   
+        trashure.GET("/", middleware.AdminOnly, controllers.GetTrashureRequest) 
+        trashure.PUT("/:id/confirm", middleware.AdminOnly, controllers.ConfirmTrashureRequest) 
+        trashure.GET("/:id", controllers.GetTrashureRequest)                    
+        trashure.DELETE("/:id", controllers.DeleteTrashureRequest)             
+        trashure.GET("/signed-url", controllers.GetSignedURL)                  
     }
 
-    // EduGreen Routes
+    
     edugreen := r.Group("/edugreen")
-    edugreen.Use(middleware.RequireAuth) // Semua rute EduGreen dilindungi autentikasi
+    edugreen.Use(middleware.RequireAuth) 
     {
-        // Video Routes
-        edugreen.GET("/videos", controllers.GetVideos)                   // User melihat semua video edukasi
-        edugreen.POST("/videos", middleware.AdminOnly, controllers.CreateVideo) // Admin menambah video edukasi
-        edugreen.PUT("/videos/:id", middleware.AdminOnly, controllers.UpdateVideo) // Admin memperbarui video
-        edugreen.DELETE("/videos/:id", middleware.AdminOnly, controllers.DeleteVideo) // Admin menghapus video
-        edugreen.POST("/videos/:id/complete", controllers.CompleteVideo) // User menyelesaikan video edukasi
+        edugreen.GET("/videos", controllers.GetVideos)                   
+        edugreen.POST("/videos", middleware.AdminOnly, controllers.CreateVideo) 
+        edugreen.PUT("/videos/:id", middleware.AdminOnly, controllers.UpdateVideo) 
+        edugreen.DELETE("/videos/:id", middleware.AdminOnly, controllers.DeleteVideo) 
+        edugreen.POST("/videos/:id/complete", controllers.CompleteVideo) 
 
-        // Quiz Routes
-        edugreen.GET("/quizzes", controllers.GetQuizzes)                        // User melihat daftar kuis
-        edugreen.POST("/quizzes", middleware.AdminOnly, controllers.CreateQuiz) // Admin membuat kuis
+        edugreen.GET("/quizzes", controllers.GetQuizzes)                       
+        edugreen.POST("/quizzes", middleware.AdminOnly, controllers.CreateQuiz) 
         edugreen.POST("/quizzes/:id/complete", controllers.CompleteQuiz)     
     }
 
-    // Bank Sampah Routes
     banksampah := r.Group("/banksampah")
-    banksampah.Use(middleware.RequireAuth, middleware.BankSampahOnly) // Autentikasi khusus untuk bank sampah
+    banksampah.Use(middleware.RequireAuth, middleware.BankSampahOnly)
     {
-        banksampah.GET("/collections", controllers.GetBankSampahCollections)               // Mendapatkan jadwal penjemputan terkait bank sampah
-        banksampah.PUT("/collections/:id/status", controllers.UpdateCollectionStatusByBankSampah) // Mengubah status penjemputan
+        banksampah.GET("/collections", controllers.GetBankSampahCollections)              
+        banksampah.PUT("/collections/:id/status", controllers.UpdateCollectionStatusByBankSampah)
         banksampah.GET("/trashure-requests", controllers.GetTrashureRequestsByBankSampah)  // Melihat Trashure Requests yang terkait
     }
 
-    // Admin Routes
     admin := r.Group("/admin")
-    admin.Use(middleware.RequireAuth, middleware.AdminOnly) // Rute untuk admin
+    admin.Use(middleware.RequireAuth, middleware.AdminOnly) 
     {
-        admin.GET("/statistics", controllers.GetStatistics) // Admin melihat laporan statistik aplikasi
+        admin.GET("/statistics", controllers.GetStatistics)
     }
 
     wasteconnect := r.Group("/wasteconnect")
     wasteconnect.Use(middleware.RequireAuth)
     {
-    // Bank Sampah
     wasteconnect.PUT("/order/:id/confirm", middleware.BankSampahOnly, controllers.ConfirmOrder)
     wasteconnect.POST("/order/:id/rate", middleware.BankSampahOnly, controllers.RateOrder)
     wasteconnect.GET("/user/history", controllers.GetUserHistory)

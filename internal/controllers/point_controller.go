@@ -8,7 +8,6 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-// GetPoints - Melihat poin pengguna
 func GetPoints(c *gin.Context) {
     var points []models.Point
     if err := postgresql.DB.Preload("User").Find(&points).Error; err != nil {
@@ -18,7 +17,6 @@ func GetPoints(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": points})
 }
 
-// AddPoints - Menambahkan poin ke pengguna
 func AddPoints(c *gin.Context) {
     var body struct {
         UserID uint `json:"user_id" binding:"required"`
@@ -33,7 +31,6 @@ func AddPoints(c *gin.Context) {
     var point models.Point
     postgresql.DB.Where("user_id = ?", body.UserID).First(&point)
 
-    // Jika pengguna tidak memiliki catatan poin, buat catatan baru
     if point.ID == 0 {
         point = models.Point{
             UserID: body.UserID,
@@ -49,7 +46,7 @@ func AddPoints(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Points added successfully", "data": point})
 }
 
-// RedeemPoints - Menukarkan poin
+
 func RedeemPoints(c *gin.Context) {
     var body struct {
         UserID uint `json:"user_id" binding:"required"`
@@ -69,13 +66,11 @@ func RedeemPoints(c *gin.Context) {
         return
     }
 
-    // Cek apakah poin mencukupi
     if point.Points < body.Points {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Not enough points"})
         return
     }
 
-    // Kurangi poin
     point.Points -= body.Points
     postgresql.DB.Save(&point)
 

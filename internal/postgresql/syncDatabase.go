@@ -18,6 +18,9 @@ func SyncDatabase(db *gorm.DB) error {
 		&models.Point{},
 		&models.Notification{},
 		&models.Quiz{},
+		&models.UserHistory{},
+		&models.WasteConnect{},
+		&models.BankSampah{},
 	);err != nil{
 		return err
 	}

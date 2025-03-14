@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateWasteCollection - Membuat jadwal penjemputan baru
 func CreateWasteCollection(c *gin.Context) {
     var body struct {
         PickupDate  time.Time `json:"pickup_date" binding:"required"`
@@ -38,7 +37,6 @@ func CreateWasteCollection(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"message": "Waste collection created successfully", "data": collection})
 }
 
-// GetWasteCollections - Mendapatkan semua jadwal penjemputan
 func GetWasteCollections(c *gin.Context) {
     user, _ := c.Get("user")
     currentUser := user.(models.User)
@@ -52,7 +50,6 @@ func GetWasteCollections(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"data": collections})
 }
 
-// UpdateWasteCollectionStatus - Perbarui status jadwal
 func UpdateWasteCollectionStatus(c *gin.Context) {
     id := c.Param("id")
     var body struct {
@@ -79,7 +76,6 @@ func UpdateWasteCollectionStatus(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Status updated successfully", "data": collection})
 }
 
-// DeleteWasteCollection - Hapus jadwal penjemputan
 func DeleteWasteCollection(c *gin.Context) {
     id := c.Param("id")
 

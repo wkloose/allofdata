@@ -11,17 +11,13 @@ import (
 )
 
 func init() {
-    // Memuat file .env
     err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 	
-
-    // Hubungkan ke database
     db := postgresql.ConnectToDb()
 
-    // Sinkronisasi struktur database
     if err := postgresql.SyncDatabase(db); err != nil {
         log.Fatalf("Error syncing database: %v", err)
     }

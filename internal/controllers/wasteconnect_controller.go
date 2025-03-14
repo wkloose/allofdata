@@ -24,7 +24,6 @@ func ConfirmOrder(c *gin.Context) {
         return
     }
 
-    // Update status permintaan
     request.Status = body.Status
     if err := postgresql.DB.Save(&request).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update Trashure Request"})
@@ -36,7 +35,7 @@ func ConfirmOrder(c *gin.Context) {
 func RateOrder(c *gin.Context) {
     id := c.Param("id")
     var body struct {
-        Points int `json:"points" binding:"required"` // Jumlah poin yang diberikan
+        Points int `json:"points" binding:"required"`
     }
 
     if err := c.ShouldBindJSON(&body); err != nil {
@@ -50,7 +49,6 @@ func RateOrder(c *gin.Context) {
         return
     }
 
-    // Update poin
     request.Points = body.Points
     if err := postgresql.DB.Save(&request).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update points for Trashure Request"})
